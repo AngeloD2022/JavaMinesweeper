@@ -25,6 +25,10 @@ public class Minesweeper {
             String r = s.nextLine();
             String[] params = r.split(",");
             b.uncoverTile(Integer.parseInt(params[0]), Integer.parseInt(params[1]));
+            if(b.gameOver){
+                b.displayBoard();
+                System.out.println("BOOOOONMSMNM!!");
+            }
         }
         
         
