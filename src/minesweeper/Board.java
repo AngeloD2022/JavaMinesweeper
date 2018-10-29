@@ -55,10 +55,30 @@ public class Board {
         for (int y = 0; y < height; y++) {
             System.out.print((y % 10) + " ");
             for (int x = 0; x < width; x++) {
-                System.out.print(". ");
+                if (tiles[x][y].uncovered && tiles[x][y].isMine) {
+                    System.out.print("X ");
+                    
+                } else {
+                    if (tiles[x][y].adjacent > 0) {
+                        System.out.print(tiles[x][y].adjacent + " ");
+                    }else if(tiles[x][y].adjacent == 0 && tiles[x][y].uncovered){
+                        System.out.print("  ");
+                    }
+                    else{
+                        System.out.print(". ");
+                    }
+
+                }
+
             }
             System.out.println();
         }
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        
 
     }
 
@@ -72,31 +92,33 @@ public class Board {
     void uncoverTile(int x, int y) {
         Tile selected = tiles[x][y];
         if (!selected.uncovered) {
+            tiles[x][y].uncovered = true;
             if (selected.isMine) {
                 endGame();
-            }
-
-            int minesAdjacent = 0;
-            for (int iy = y - 1; iy <= y + 1; iy++) {
-                for (int ix = x - 1; ix <= x + 1; ix++) {
-                    if (tiles[ix][iy] != tiles[x][y]) {
+            } else {
+                int minesAdjacent = 0;
+                for (int iy = y - 1; iy <= y + 1; iy++) {
+                    for (int ix = x - 1; ix <= x + 1; ix++) {
                         if (isInBounds(ix, iy)) {
-                            if (tiles[ix][iy].isMine) {
-                                minesAdjacent++;
+                            if (tiles[ix][iy] != tiles[x][y]) {
+                                if (tiles[ix][iy].isMine) {
+                                    minesAdjacent++;
+                                }
                             }
                         }
                     }
                 }
-            }
-            //count how many mines surround this tile (3x3 square)
-            //int adjacent
+                tiles[x][y].adjacent = minesAdjacent;
+                //count how many mines surround this tile (3x3 square)
+                //int adjacent
 
-            if (minesAdjacent == 0) {
-                for (int iy = y - 1; iy <= y + 1; iy++) {
-                    for (int ix = x - 1; ix <= x + 1; ix++) {
-                        if (tiles[ix][iy] != tiles[x][y]) {
+                if (minesAdjacent == 0) {
+                    for (int iy = y - 1; iy <= y + 1; iy++) {
+                        for (int ix = x - 1; ix <= x + 1; ix++) {
                             if (isInBounds(ix, iy)) {
-                                uncoverTile(ix, iy);
+                                if (tiles[ix][iy] != tiles[x][y]) {
+                                    uncoverTile(ix, iy);
+                                }
                             }
                         }
                     }
@@ -107,9 +129,10 @@ public class Board {
         //no mines adjacent
         //uncover surrounding
     }
-
+    boolean gameOver = false;
 
     void endGame() {
-        System.out.println("Boom.");
+        gameOver = true;
+        System.out.println("Boom. you lost.");
     }
 }
