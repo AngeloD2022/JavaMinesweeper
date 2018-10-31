@@ -12,7 +12,7 @@ import java.util.Random;
  * @author delucaa.2022
  */
 public class Board {
-
+    boolean hasWon = false;
     Tile[][] tiles;
     int numMines;
     int width;
@@ -57,14 +57,16 @@ public class Board {
             for (int x = 0; x < width; x++) {
                 if (gameOver && tiles[x][y].isMine) {
                     System.out.print("X ");
-                    
-                } else {
+
+                }else if(hasWon && tiles[x][y].isMine){
+                    System.out.print("X ");
+                }
+                else {
                     if (tiles[x][y].adjacent > 0) {
                         System.out.print(tiles[x][y].adjacent + " ");
-                    }else if(tiles[x][y].adjacent == 0 && tiles[x][y].uncovered){
+                    } else if (tiles[x][y].adjacent == 0 && tiles[x][y].uncovered) {
                         System.out.print("- ");
-                    }
-                    else{
+                    } else {
                         System.out.print(". ");
                     }
 
@@ -78,7 +80,6 @@ public class Board {
         System.out.println();
         System.out.println();
         System.out.println();
-        
 
     }
 
@@ -135,16 +136,20 @@ public class Board {
         gameOver = true;
         System.out.println("Boom. you lost.");
     }
-    
-    boolean checkWin(){
-        int i = numMines;
-        for(int y = 0; y < height; y++){
-            for(int x = 0; x < width; x++){
-                if(tiles[x][y].uncovered && !tiles[x][y].isMine){
-                    i = 0;
+
+    boolean checkWin() {
+        int i = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (!tiles[x][y].uncovered) {
+                    i++;
                 }
             }
         }
-        return i == 0? true : false;
+        if (i == numMines) {
+            hasWon = true;
+            displayBoard();
+        }
+        return i == numMines ? true : false;
     }
 }
